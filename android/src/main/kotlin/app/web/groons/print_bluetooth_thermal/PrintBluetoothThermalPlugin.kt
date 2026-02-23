@@ -3,6 +3,7 @@ package app.web.groons.print_bluetooth_thermal
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -45,6 +46,8 @@ class PrintBluetoothThermalPlugin: FlutterPlugin, MethodCallHandler {
   private val myPermissionCode = 34264
   private var activeResult: Result? = null
   private var permissionGranted: Boolean = false
+
+  private var bluetoothSocket: BluetoothSocket? = null
 
   override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "groons.web.app/print")
@@ -247,6 +250,7 @@ class PrintBluetoothThermalPlugin: FlutterPlugin, MethodCallHandler {
       if(outputStream != null){
         outputStream?.close()
         outputStream = null
+        bluetoothSocket?.close();
         result.success(true);
       }else{
         result.success(true);
@@ -282,7 +286,7 @@ class PrintBluetoothThermalPlugin: FlutterPlugin, MethodCallHandler {
         try {
           val bluetoothAddress = mac//"66:02:BD:06:18:7B" // replace with your device's address
           val bluetoothDevice = bluetoothAdapter.getRemoteDevice(bluetoothAddress)
-          val bluetoothSocket = bluetoothDevice?.createRfcommSocketToServiceRecord(
+          bluetoothSocket = bluetoothDevice?.createRfcommSocketToServiceRecord(
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
           )
           bluetoothAdapter.cancelDiscovery()
