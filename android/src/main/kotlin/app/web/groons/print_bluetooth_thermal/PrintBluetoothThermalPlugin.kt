@@ -247,14 +247,10 @@ class PrintBluetoothThermalPlugin: FlutterPlugin, MethodCallHandler {
 
       result.success(lista)
     }else if(call.method == "disconnect"){
-      if(outputStream != null){
-        outputStream?.close()
-        outputStream = null
-        bluetoothSocket?.close();
-        result.success(true);
-      }else{
-        result.success(true);
-      }
+      outputStream?.close()
+      outputStream = null
+      bluetoothSocket?.close();
+      result.success(true);
     }else {
       result.notImplemented()
     }
